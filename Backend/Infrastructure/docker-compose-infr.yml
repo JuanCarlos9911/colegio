@@ -1,0 +1,51 @@
+services:  
+  sqlserver:    
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Password1234 
+    ports:
+      - 1434:1433
+    networks:
+     - backend
+  postgres:
+    container_name: postgres
+    image: postgres:17.4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Password1234      
+    ports:
+      - 5433:5432
+    networks:
+      - backend
+
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:25.0.3
+    container_name: cloudbeaver
+    volumes:
+      - ./cloudbeaver:/opt/cloudbeaver/workspace
+    ports:
+      - 8978:8978
+    networks:
+      - backend
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.2
+    container_name: keycloak
+    restart: on-failure
+    command: ["start-dev","--import-realm"]
+    ports:
+      - 8081:8080
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=Password1234      
+    volumes:
+        - ./fullstack-realm.json:/opt/keycloak/data/import/fullstack-realm.json    
+    networks:
+      - backend
+
+networks:
+  backend:
+    name: backend
+    driver: bridge

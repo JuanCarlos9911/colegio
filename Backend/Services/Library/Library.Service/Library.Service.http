@@ -1,0 +1,6 @@
+@Library.Service_HostAddress = http://localhost:5269
+@version = v1
+
+### Get all persons
+GET {{Library.Service_HostAddress}}/api/{{version}}/persons
+Accept: application/json

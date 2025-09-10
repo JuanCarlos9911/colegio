@@ -1,0 +1,36 @@
+services:
+  library.service:
+    image: library.service:1.0.0
+    container_name: library.service
+    build:
+      context: .
+      dockerfile: Backend/Services/Library/Library.Service/Dockerfile
+    environment:
+      - Database__Provider=PostgreSQL
+      # - Database__Provider=SqlServer
+      - ConnectionStrings__SqlServerConnection=Server=sqlserver,1433;Database=FullSatck.Library;User Id=sa;Password=Password1234;TrustServerCertificate=True;
+      - ConnectionStrings__PostgreSQLConnection=Host=postgres;Port=5432;Database=FullSatck.Library;Username=postgres;Password=Password1234
+      - IdPSettings__Authority=http://keycloak:8080/realms/fullstack
+      - IdPSettings__ValidAudience=full-stack-ng
+      - IdPSettings__ValidIssuer=http://localhost:8081/realms/fullstack
+      # - IdPSettings__Authority=https://login.microsoftonline.com/359f9a7d-18ce-42bf-80c8-7cff9e947cec/v2.0
+      # - IdPSettings__ValidAudience=api://b2148a42-dcd1-46f3-84c3-4851daec7805
+      # - IdPSettings__ValidIssuer=https://sts.windows.net/359f9a7d-18ce-42bf-80c8-7cff9e947cec/
+    ports:
+      - 8082:8080
+    networks:
+      - backend 
+  security.service:
+    image: security.service:1.0.0
+    container_name: security.service
+    build:
+      context: .
+      dockerfile: Backend/Platform/Security/Security.Service/Dockerfile
+    ports:      
+      - 8084:8080
+    networks:
+      - backend
+networks:
+  backend:
+    name: backend
+    driver: bridge
